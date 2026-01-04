@@ -100,18 +100,18 @@ WSGI_APPLICATION = "backend.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# Use environment variables to set the database host and port
-DB_HOST = os.getenv('DB_HOST', '127.0.0.1')  # Default to localhost
-DB_PORT = os.getenv('DB_PORT', '3406')  # Default to MySQL port
-
+# Supabase PostgreSQL configuration
 DATABASES = {
     "default": {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'codehub_db',
-        'USER': 'backend',
-        'PASSWORD': 'test-pass',
-        'HOST': DB_HOST,
-        'PORT': DB_PORT,
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres.nicwsajhxfynxflfklti',
+        'PASSWORD': 'Spring@0@1@0#',
+        'HOST': 'aws-1-ap-southeast-1.pooler.supabase.com',
+        'PORT': '6543',
+        'OPTIONS': {
+            'sslmode': 'require',
+        },
     }
 }
 
@@ -170,4 +170,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
     "http://localhost:5173",
+    "http://localhost:5174",
 ]

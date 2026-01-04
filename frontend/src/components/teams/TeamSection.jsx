@@ -61,9 +61,17 @@ const TeamSection = () => {
         const res = await axiosInstance.get("/students/public/");
         const data = res.data;
 
-        // Filter members with non-null, non-empty titles
+        // Filter only executive members (not leads or general members)
+        const executiveTitles = [
+          "PRESIDENT",
+          "VICE PRESIDENT",
+          "SECRETARY",
+          "TREASURER",
+          "DIRECTOR OPERATIONS",
+          "COORDINATOR"
+        ];
         const filtered = data.filter(
-          m => m.title && m.title.trim() !== "" && m.title.toUpperCase() !== "NULL"
+          m => m.title && executiveTitles.includes(m.title.toUpperCase())
         );
 
         setMembers(filtered);

@@ -195,3 +195,23 @@ body.dark-mode .toggle-circle {
 .search-item:hover {
   background: #f2f2f2;
 }
+
+/* ==================== MENU TOGGLE BUTTON ==================== */
+.menu-toggle-btn {
+  background-color: transparent !important;
+  border: none !important;
+  color: #fff !important;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.menu-toggle-btn:hover,
+.menu-toggle-btn:focus {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: #fff !important;
+}
+
+.menu-toggle-btn:active {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}

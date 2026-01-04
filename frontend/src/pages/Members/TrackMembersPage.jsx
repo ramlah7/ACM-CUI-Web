@@ -1,32 +1,34 @@
-import React, { useEffect, useState, useCallback } from "react";
-import Navbar from "../../components/DashboardNavbar/Navbar";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import axiosInstance from "../../axios";
 import { FaEye, FaEdit } from "react-icons/fa";
-import "./TrackMemberPage.css";
-
 import ViewMemberModal from "../../components/members/ViewMemberModal";
 import EditMemberModal from "../../components/members/EditMemberModal";
+import "./TrackMemberPage.css";
 
+// Role badge styling helper
 const getRoleClass = (role) => {
-  const roleLower = role?.toLowerCase() || 'other';
-  if (roleLower.includes('student')) return 'role-student';
-  if (roleLower.includes('lead')) return 'role-lead';
-  return 'role-other';
+  const roleLower = role?.toLowerCase() || "other";
+  if (roleLower.includes("student")) return "role-student";
+  if (roleLower.includes("lead")) return "role-lead";
+  return "role-other";
 };
 
 const TrackMembersPage = () => {
+  // Data state
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
+  // Modal state
   const [isViewModalOpen, setViewModalOpen] = useState(false);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
 
+  // Fetch members
   const fetchMembers = useCallback(async () => {
     try {
       setLoading(true);
+      setError(null);
       const res = await axiosInstance.get("/students/");
       setMembers(res.data);
     } catch (err) {
@@ -40,177 +42,185 @@ const TrackMembersPage = () => {
     fetchMembers();
   }, [fetchMembers]);
 
-  // Handle window resize
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  const handleView = (member) => {
+  // Modal handlers
+  const handleView = useCallback((member) => {
     setSelectedMember(member);
     setViewModalOpen(true);
-  };
+  }, []);
 
-  const handleEdit = (member) => {
+  const handleEdit = useCallback((member) => {
     setSelectedMember(member);
     setEditModalOpen(true);
-  };
+  }, []);
 
-  const handleCloseModals = () => {
+  const handleCloseModals = useCallback(() => {
     setViewModalOpen(false);
     setEditModalOpen(false);
     setSelectedMember(null);
-  };
+  }, []);
 
-  const handleSaveSuccess = () => {
+  const handleSaveSuccess = useCallback(() => {
     fetchMembers();
-  };
+    handleCloseModals();
+  }, [fetchMembers, handleCloseModals]);
 
-  if (loading) return <p className="status-message">Loading members...</p>;
-  if (error) return <p className="status-message error-message">{error}</p>;
+  // Memoized table headers
+  const tableHeaders = useMemo(() => [
+    { key: "username", label: "Username" },
+    { key: "roll_no", label: "Roll No." },
+    { key: "email", label: "Email" },
+    { key: "phone", label: "Phone" },
+    { key: "role", label: "Role" },
+    { key: "club", label: "Club" },
+    { key: "actions", label: "Actions", className: "actions-header" },
+  ], []);
 
-  // Mobile card view
-  if (isMobile) {
+  // Render loading state
+  if (loading) {
     return (
-      <>
-        <div className="dashboard-container">
-          <div className="track-members-container">
-            <h1 className="dashboard-title">Track Members</h1>
-            <div className="members-mobile-list">
-              {members.map((member) => (
-                <div key={member.user.id} className="member-card">
-                  <div className="member-card-header">
-                    <div className="member-name">{member.user.username}</div>
-                    <span className={`role-badge ${getRoleClass(member.user.role)}`}>
-                      {member.user.role}
-                    </span>
-                  </div>
-                  <div className="member-card-body">
-                    <div className="card-item">
-                      <span className="card-label">Roll No.</span>
-                      <span className="card-value">{member.roll_no}</span>
-                    </div>
-                    <div className="card-item">
-                      <span className="card-label">Email</span>
-                      <span className="card-value">{member.user.email}</span>
-                    </div>
-                    <div className="card-item">
-                      <span className="card-label">Phone</span>
-                      <span className="card-value">{member.user.phone_number || 'N/A'}</span>
-                    </div>
-                    <div className="card-item">
-                      <span className="card-label">Club</span>
-                      <span className="card-value">{member.club}</span>
-                    </div>
-                  </div>
-                  <div className="member-card-actions">
-                    <button 
-                      className="action-btn btn-view" 
-                      onClick={() => handleView(member)} 
-                      title="View Member"
-                    >
-                      <FaEye /> View
-                    </button>
-                    <button 
-                      className="action-btn btn-edit2" 
-                      onClick={() => handleEdit(member)} 
-                      title="Edit Member"
-                    >
-                      <FaEdit /> Edit
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-        
-        <ViewMemberModal 
-          isOpen={isViewModalOpen}
-          onClose={handleCloseModals}
-          member={selectedMember}
-        />
-        <EditMemberModal 
-          isOpen={isEditModalOpen}
-          onClose={handleCloseModals}
-          member={selectedMember}
-          onSave={handleSaveSuccess}
-        />
-      </>
+      <div className="track-members-container">
+        <h1 className="dashboard-title">Track Members</h1>
+        <p className="status-message">Loading members...</p>
+      </div>
     );
   }
 
-  // Desktop table view
-  return (
-    <>
-      <div className="dashboard-container">
-        <div className="track-members-container">
-          <h1 className="dashboard-title">Track Members</h1>
-          <div className="members-table-card">
-            <table className="members-table">
-              <thead>
-                <tr>
-                  <th>Username</th>
-                  <th>Roll No.</th>
-                  <th>Email</th>
-                  <th>Phone</th>
-                  <th>Role</th>
-                  <th>Club</th>
-                  <th className="actions-header">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {members.map((member) => (
-                  <tr key={member.user.id}>
-                    <td>{member.user.username}</td>
-                    <td>{member.roll_no}</td>
-                    <td>{member.user.email}</td>
-                    <td>{member.user.phone_number}</td>
-                    <td>
-                      <span className={`role-badge ${getRoleClass(member.user.role)}`}>
-                        {member.user.role}
-                      </span>
-                    </td>
-                    <td>{member.club}</td>
-                    <td className="actions-cell">
-                      <button 
-                        className="action-btn btn-view" 
-                        onClick={() => handleView(member)} 
-                        title="View Member"
-                      >
-                        <FaEye />
-                      </button>
-                      <button 
-                        className="action-btn btn-edit2" 
-                        onClick={() => handleEdit(member)} 
-                        title="Edit Member"
-                      >
-                        <FaEdit />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+  // Render error state
+  if (error) {
+    return (
+      <div className="track-members-container">
+        <h1 className="dashboard-title">Track Members</h1>
+        <p className="status-message error-message">{error}</p>
       </div>
-      
-      <ViewMemberModal 
+    );
+  }
+
+  // Render empty state
+  if (members.length === 0) {
+    return (
+      <div className="track-members-container">
+        <h1 className="dashboard-title">Track Members</h1>
+        <p className="status-message">No members found</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="track-members-container">
+      <h1 className="dashboard-title">Track Members</h1>
+
+      {/* Desktop Table View */}
+      <div className="members-table-card">
+        <table className="members-table">
+          <thead>
+            <tr>
+              {tableHeaders.map((header) => (
+                <th key={header.key} className={header.className || ""}>
+                  {header.label}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {members.map((member) => (
+              <tr key={member.user?.id || member.id}>
+                <td>{member.user?.username || "N/A"}</td>
+                <td>{member.roll_no || "N/A"}</td>
+                <td>{member.user?.email || "N/A"}</td>
+                <td>{member.user?.phone_number || "N/A"}</td>
+                <td>
+                  <span className={`role-badge ${getRoleClass(member.user?.role)}`}>
+                    {member.user?.role || "Unknown"}
+                  </span>
+                </td>
+                <td>{member.club || "N/A"}</td>
+                <td className="actions-cell">
+                  <button
+                    className="action-btn btn-view"
+                    onClick={() => handleView(member)}
+                    title="View Member"
+                    aria-label={`View ${member.user?.username}`}
+                  >
+                    <FaEye />
+                  </button>
+                  <button
+                    className="action-btn btn-edit2"
+                    onClick={() => handleEdit(member)}
+                    title="Edit Member"
+                    aria-label={`Edit ${member.user?.username}`}
+                  >
+                    <FaEdit />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Mobile Card View */}
+      <div className="members-mobile-list">
+        {members.map((member) => (
+          <article key={member.user?.id || member.id} className="member-card">
+            <header className="member-card-header">
+              <span className="member-name">{member.user?.username || "N/A"}</span>
+              <span className={`role-badge ${getRoleClass(member.user?.role)}`}>
+                {member.user?.role || "Unknown"}
+              </span>
+            </header>
+
+            <div className="member-card-body">
+              <div className="card-item">
+                <span className="card-label">Roll No.</span>
+                <span className="card-value">{member.roll_no || "N/A"}</span>
+              </div>
+              <div className="card-item">
+                <span className="card-label">Email</span>
+                <span className="card-value">{member.user?.email || "N/A"}</span>
+              </div>
+              <div className="card-item">
+                <span className="card-label">Phone</span>
+                <span className="card-value">{member.user?.phone_number || "N/A"}</span>
+              </div>
+              <div className="card-item">
+                <span className="card-label">Club</span>
+                <span className="card-value">{member.club || "N/A"}</span>
+              </div>
+            </div>
+
+            <footer className="member-card-actions">
+              <button
+                className="action-btn btn-view"
+                onClick={() => handleView(member)}
+                aria-label={`View ${member.user?.username}`}
+              >
+                <FaEye /> View
+              </button>
+              <button
+                className="action-btn btn-edit2"
+                onClick={() => handleEdit(member)}
+                aria-label={`Edit ${member.user?.username}`}
+              >
+                <FaEdit /> Edit
+              </button>
+            </footer>
+          </article>
+        ))}
+      </div>
+
+      {/* Modals */}
+      <ViewMemberModal
         isOpen={isViewModalOpen}
         onClose={handleCloseModals}
         member={selectedMember}
       />
-      <EditMemberModal 
+      <EditMemberModal
         isOpen={isEditModalOpen}
         onClose={handleCloseModals}
         member={selectedMember}
         onSave={handleSaveSuccess}
       />
-    </>
+    </div>
   );
 };
 

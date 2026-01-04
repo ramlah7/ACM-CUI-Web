@@ -19,6 +19,9 @@ function Regform() {
     title: ""
   });
 
+  // Separate state for the full name input field
+  const [fullName, setFullName] = useState("");
+
   // Define all available clubs
   const clubOptions = [
     { value: 'codehub', label: 'CodeHub' },
@@ -27,6 +30,12 @@ function Regform() {
     { value: 'registration_and_decor', label: 'Registration and Decor' },
     { value: 'events_and_logistics', label: 'Events and Logistics' }
   ];
+
+  // Executive titles that don't require a club (ACM-wide positions)
+  const executiveTitles = ['PRESIDENT', 'VICE PRESIDENT', 'SECRETARY', 'TREASURER'];
+
+  // Check if current title is an executive title
+  const isExecutiveTitle = executiveTitles.includes(formData.title);
 
   const [titleInputMode, setTitleInputMode] = useState(false);
   const { signup, loading } = useAuthStore();
@@ -99,15 +108,33 @@ function Regform() {
     const { id, value } = e.target;
 
     if (id === "name") {
-      const [firstName, ...lastParts] = value.trim().split(" ");
-      setFormData((prev) => ({
-        ...prev,
-        user: {
-          ...prev.user,
-          first_name: firstName || "",
-          last_name: lastParts.join(" ") || ""
-        }
-      }));
+      // Store the raw name value to preserve spaces while typing
+      setFullName(value);
+
+      // Parse first and last name for form submission
+      const trimmedValue = value.trim();
+      const spaceIndex = trimmedValue.indexOf(" ");
+      if (spaceIndex === -1) {
+        setFormData((prev) => ({
+          ...prev,
+          user: {
+            ...prev.user,
+            first_name: trimmedValue,
+            last_name: ""
+          }
+        }));
+      } else {
+        const firstName = trimmedValue.substring(0, spaceIndex);
+        const lastName = trimmedValue.substring(spaceIndex + 1).trim();
+        setFormData((prev) => ({
+          ...prev,
+          user: {
+            ...prev.user,
+            first_name: firstName,
+            last_name: lastName
+          }
+        }));
+      }
     } else if (id === "reg") {
       // Convert to uppercase and validate format
       const upperValue = value.toUpperCase();
@@ -195,8 +222,11 @@ if (!phonePattern.test(formData.user.phone_number)) {
 }
 
 
-    if (!formData.club) {
-      alert("Club selection is required.");
+    // Club is required only for non-executive titles
+    const execTitles = ['PRESIDENT', 'VICE PRESIDENT', 'SECRETARY', 'TREASURER'];
+    const isExec = execTitles.includes(formData.title);
+    if (!formData.club && !isExec) {
+      alert("Club selection is required for non-executive members.");
       return;
     }
 
@@ -227,6 +257,7 @@ if (!phonePattern.test(formData.user.phone_number)) {
         club: isLead ? currentUserClub : "",
         title: ""
       });
+      setFullName("");
       setTitleInputMode(false);
       setRegNoError("");
       setPhoneError("");
@@ -289,7 +320,7 @@ if (!phonePattern.test(formData.user.phone_number)) {
                   className="form-control2"
                   id="name"
                   placeholder="John Doe"
-                  value={`${formData.user.first_name} ${formData.user.last_name}`.trim()}
+                  value={fullName}
                   onChange={handleChange}
                   required
                 />
@@ -366,18 +397,18 @@ if (!phonePattern.test(formData.user.phone_number)) {
               </div>
 
               <div className="form-group2 w-45">
-                <label htmlFor="club">Club</label>
+                <label htmlFor="club">Club {isExecutiveTitle && <span style={{ fontSize: '12px', color: '#666' }}>(Optional for Executives)</span>}</label>
                 <select
                   id="club"
                   className="form-control2"
                   value={formData.club}
                   onChange={handleChange}
                   disabled={isLead}
-                  required
+                  required={!isExecutiveTitle}
                 >
                   {isAdmin ? (
                     <>
-                      <option value="">-- Select Club --</option>
+                      <option value="">{isExecutiveTitle ? "-- No Club (ACM Executive) --" : "-- Select Club --"}</option>
                       {clubOptions.map(club => (
                         <option key={club.value} value={club.value}>
                           {club.label}

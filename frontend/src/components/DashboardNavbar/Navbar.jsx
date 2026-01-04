@@ -7,14 +7,13 @@ import {
   Button
 } from "react-bootstrap";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import ThemeToggle from "../ThemeToggle";
-import { BsSearch } from "react-icons/bs";
+import { BsSearch, BsList } from "react-icons/bs";
 import "./Navbar.css";
 import useAuthStore from "../../store/authStore";
 import ProfileOptions from "../ProfileOptions/ProfileOptions";
 import axiosInstance from "../../axios";
 
-const Navbar = () => {
+const Navbar = ({ onMenuClick, showMenuButton }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -193,6 +192,18 @@ const Navbar = () => {
           </div>
         )}
 
+        {/* Mobile Menu Toggle Button */}
+        {showMenuButton && (
+          <Button
+            variant="light"
+            className="menu-toggle-btn me-2 d-lg-none"
+            onClick={onMenuClick}
+            aria-label="Toggle sidebar menu"
+          >
+            <BsList size={22} />
+          </Button>
+        )}
+
         <BootstrapNavbar.Toggle
           aria-controls="navbar-nav"
           className="ms-2 bg-light"
@@ -201,6 +212,9 @@ const Navbar = () => {
         <BootstrapNavbar.Collapse id="navbar-nav" className="w-100">
           {/* Navigation Links */}
           <Nav className="nav-links d-flex flex-lg-row flex-column align-items-lg-center align-items-center mx-auto mt-lg-0 mt-2">
+            <Nav.Link as={Link} to="/blogs" className="text-white fw-semibold">
+              Blog
+            </Nav.Link>
             <Nav.Link as={Link} to="/achievement" className="text-white fw-semibold">
               Achievement
             </Nav.Link>

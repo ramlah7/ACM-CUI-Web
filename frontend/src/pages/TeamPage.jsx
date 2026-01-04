@@ -36,9 +36,9 @@ const TeamPage = () => {
         const filtered = data.filter(student => student.club === backendClub);
 
         const formatted = filtered.map(student => ({
-          id: student.id,
+          id: student.user_id,
           name: student.full_name,
-          designation: student.profile_desc,
+          designation: student.title && student.title !== "NULL" ? student.title : "",
           image: student.profile_pic
         }));
 

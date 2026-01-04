@@ -1,15 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState, useCallback } from "react";
+import { Link, useLocation } from "react-router-dom";
 import useAuthStore from "../../store/authStore.js";
 import axiosInstance from "../../axios";
 import "./Sidebar.css";
 
-const Sidebar = () => {
+const Sidebar = ({ onNavigate }) => {
   const { role } = useAuthStore();
+  const location = useLocation();
   const loggedInUserId = parseInt(localStorage.getItem("user_id"));
   const [student, setStudent] = useState(null);
-  
-  // State to track which dropdown is currently open
   const [activeDropdown, setActiveDropdown] = useState(null);
 
   useEffect(() => {
@@ -29,185 +28,25 @@ const Sidebar = () => {
     fetchStudent();
   }, [loggedInUserId]);
 
-  // Helper function to toggle dropdowns
-  const toggleDropdown = (name) => {
-    // If clicking the already open one, close it (set to null), otherwise open the new one
-    setActiveDropdown(activeDropdown === name ? null : name);
-  };
+  const toggleDropdown = useCallback((name) => {
+    setActiveDropdown((prev) => (prev === name ? null : name));
+  }, []);
 
-  const renderButtons = () => {
-    // ADMIN VIEW (Kept as is for now, but can be grouped similarly if desired)
-    if (role === "ADMIN") {
-      return (
-        <>
-          <Link to="/dashboard/members" className="btn btn-primary m-2">
-            Member Management
-          </Link>
-          <Link to="/dashboard/blogs" className="btn btn-primary m-2">
-            Handle Blogs
-          </Link>
-          <Link to="/dashboard/events" className="btn btn-primary m-2">
-            Events
-          </Link>
-          <Link to="/dashboard/events/create" className="btn btn-primary m-2">
-            Create Event
-          </Link>
-          <Link to="/dashboard/signup" className="btn btn-primary m-2">
-            Signup New Members
-          </Link>
-          <Link to="/dashboard/otp" className="btn btn-primary m-2">
-            Reset Password
-          </Link>
-        </>
-      );
+  const handleLinkClick = useCallback(() => {
+    if (onNavigate) {
+      onNavigate();
     }
+  }, [onNavigate]);
 
-    // LEAD VIEW (Grouped)
-    if (role === "LEAD") {
-      const isTreasurer = student?.title?.toUpperCase() === "TREASURER";
+  // Check if path is active
+  const isActive = useCallback((path) => {
+    return location.pathname === path;
+  }, [location.pathname]);
 
-      return (
-        <>
-          {/* ATTENDANCE GROUP */}
-          <div className="sidebar-group">
-            <button 
-              className="btn btn-primary m-2 dropdown-toggle-btn"
-              onClick={() => toggleDropdown("attendance")}
-            >
-              <span>Attendance</span>
-              <span className={`arrow ${activeDropdown === "attendance" ? "open" : ""}`}>▼</span>
-            </button>
-            
-            {activeDropdown === "attendance" && (
-              <div className="dropdown-content">
-                <Link to="/dashboard/mark-attendance" className="btn btn-secondary m-2 sub-link">
-                  Mark Attendance
-                </Link>
-                <Link to="/dashboard/meeting-history" className="btn btn-secondary m-2 sub-link">
-                  View Attendance
-                </Link>
-              </div>
-            )}
-          </div>
-
-          {/* EVENTS GROUP */}
-          <div className="sidebar-group">
-            <button 
-              className="btn btn-primary m-2 dropdown-toggle-btn"
-              onClick={() => toggleDropdown("events")}
-            >
-              <span>Events</span>
-              <span className={`arrow ${activeDropdown === "events" ? "open" : ""}`}>▼</span>
-            </button>
-            
-            {activeDropdown === "events" && (
-              <div className="dropdown-content">
-                <Link to="/dashboard/events" className="btn btn-secondary m-2 sub-link">
-                  All Events
-                </Link>
-                <Link to="/dashboard/events/create" className="btn btn-secondary m-2 sub-link">
-                  Create Event
-                </Link>
-              </div>
-            )}
-          </div>
-
-          {/* BLOGS GROUP */}
-          <div className="sidebar-group">
-            <button 
-              className="btn btn-primary m-2 dropdown-toggle-btn"
-              onClick={() => toggleDropdown("blogs")}
-            >
-              <span>Blogs</span>
-              <span className={`arrow ${activeDropdown === "blogs" ? "open" : ""}`}>▼</span>
-            </button>
-            
-            {activeDropdown === "blogs" && (
-              <div className="dropdown-content">
-                <Link to="/dashboard/myblog" className="btn btn-secondary m-2 sub-link">
-                  My BlogPosts
-                </Link>
-                <Link to="/dashboard/article" className="btn btn-secondary m-2 sub-link">
-                  Post BlogPost
-                </Link>
-                <Link to="/dashboard/blogs" className="btn btn-secondary m-2 sub-link">
-                  All BlogPosts
-                </Link>
-              </div>
-            )}
-          </div>
-
-          {/* MEMBERS GROUP */}
-          <div className="sidebar-group">
-             <button 
-              className="btn btn-primary m-2 dropdown-toggle-btn"
-              onClick={() => toggleDropdown("members")}
-            >
-              <span>Members</span>
-              <span className={`arrow ${activeDropdown === "members" ? "open" : ""}`}>▼</span>
-            </button>
-
-            {activeDropdown === "members" && (
-              <div className="dropdown-content">
-                <Link to="/dashboard/members" className="btn btn-secondary m-2 sub-link">
-                  View Members
-                </Link>
-                <Link to="/dashboard/signup" className="btn btn-secondary m-2 sub-link">
-                  Signup New Member
-                </Link>
-              </div>
-            )}
-          </div>
-
-          {/* TREASURER-ONLY GROUP */}
-          {isTreasurer && (
-            <div className="sidebar-group">
-              <button 
-                className="btn btn-primary m-2 dropdown-toggle-btn"
-                onClick={() => toggleDropdown("finance")}
-              >
-                <span>Finance</span>
-                <span className={`arrow ${activeDropdown === "finance" ? "open" : ""}`}>▼</span>
-              </button>
-              
-              {activeDropdown === "finance" && (
-                <div className="dropdown-content">
-                  <Link to="/dashboard/bills" className="btn btn-secondary m-2 sub-link">
-                    View Bills
-                  </Link>
-                  <Link to="/dashboard/bills/create" className="btn btn-secondary m-2 sub-link">
-                    Add Bill
-                  </Link>
-                </div>
-              )}
-            </div>
-          )}
-        </>
-      );
-    }
-
-    // STUDENT VIEW
-    if (role === "STUDENT") {
-      return (
-        <>
-          <Link to="/dashboard/article" className="btn btn-primary m-2">
-            Post Blog
-          </Link>
-          <Link to="/dashboard/myblog" className="btn btn-primary m-2">
-            My BlogPosts
-          </Link>
-           <Link to="/dashboard/blogs" className="btn btn-primary m-2">
-              All Blogs
-          </Link>
-          <Link to="/dashboard/events" className="btn btn-primary m-2">
-            Upcoming Events
-          </Link>
-        </>
-      );
-    }
-
-    return <p>No actions available</p>;
-  };
+  // Check if any child path is active
+  const isGroupActive = useCallback((paths) => {
+    return paths.some((path) => location.pathname.startsWith(path));
+  }, [location.pathname]);
 
   const getDashboardTitle = () => {
     switch (role) {
@@ -222,13 +61,149 @@ const Sidebar = () => {
     }
   };
 
-  return (
-    <div className="sidebar">
-      <h3 className="sidebar-title mt-4 text-center">{getDashboardTitle()}</h3>
-      <div className="sidebar-actions">
-        {renderButtons()}
-      </div>
+  // Reusable nav link component
+  const NavLink = ({ to, children, className = "" }) => (
+    <Link
+      to={to}
+      className={`btn btn-primary ${className} ${isActive(to) ? "active" : ""}`}
+      onClick={handleLinkClick}
+    >
+      {children}
+    </Link>
+  );
+
+  // Dropdown component
+  const DropdownGroup = ({ name, label, children, paths = [] }) => (
+    <div className="sidebar-group">
+      <button
+        className={`btn btn-primary dropdown-toggle-btn ${isGroupActive(paths) ? "active" : ""}`}
+        onClick={() => toggleDropdown(name)}
+        aria-expanded={activeDropdown === name}
+      >
+        <span>{label}</span>
+        <span className={`arrow ${activeDropdown === name ? "open" : ""}`}>▼</span>
+      </button>
+
+      {activeDropdown === name && (
+        <div className="dropdown-content">
+          {children}
+        </div>
+      )}
     </div>
+  );
+
+  // Sub link component for dropdowns
+  const SubLink = ({ to, children }) => (
+    <Link
+      to={to}
+      className={`btn btn-secondary sub-link ${isActive(to) ? "active" : ""}`}
+      onClick={handleLinkClick}
+    >
+      {children}
+    </Link>
+  );
+
+  const renderAdminNav = () => (
+    <>
+      <NavLink to="/dashboard/members">Member Management</NavLink>
+      <NavLink to="/dashboard/blogs">Handle Blogs</NavLink>
+      <NavLink to="/dashboard/events">Events</NavLink>
+      <NavLink to="/dashboard/events/create">Create Event</NavLink>
+      <NavLink to="/dashboard/signup">Signup New Members</NavLink>
+      <NavLink to="/dashboard/otp">Reset Password</NavLink>
+    </>
+  );
+
+  const renderLeadNav = () => {
+    const isTreasurer = student?.title?.toUpperCase() === "TREASURER";
+
+    return (
+      <>
+        {/* Attendance Group */}
+        <DropdownGroup
+          name="attendance"
+          label="Attendance"
+          paths={["/dashboard/mark-attendance", "/dashboard/meeting-history"]}
+        >
+          <SubLink to="/dashboard/mark-attendance">Mark Attendance</SubLink>
+          <SubLink to="/dashboard/meeting-history">View Attendance</SubLink>
+        </DropdownGroup>
+
+        {/* Events Group */}
+        <DropdownGroup
+          name="events"
+          label="Events"
+          paths={["/dashboard/events"]}
+        >
+          <SubLink to="/dashboard/events">All Events</SubLink>
+          <SubLink to="/dashboard/events/create">Create Event</SubLink>
+        </DropdownGroup>
+
+        {/* Blogs Group */}
+        <DropdownGroup
+          name="blogs"
+          label="Blogs"
+          paths={["/dashboard/myblog", "/dashboard/article", "/dashboard/blogs"]}
+        >
+          <SubLink to="/dashboard/myblog">My BlogPosts</SubLink>
+          <SubLink to="/dashboard/article">Post BlogPost</SubLink>
+          <SubLink to="/dashboard/blogs">All BlogPosts</SubLink>
+        </DropdownGroup>
+
+        {/* Members Group */}
+        <DropdownGroup
+          name="members"
+          label="Members"
+          paths={["/dashboard/members", "/dashboard/signup"]}
+        >
+          <SubLink to="/dashboard/members">View Members</SubLink>
+          <SubLink to="/dashboard/signup">Signup New Member</SubLink>
+        </DropdownGroup>
+
+        {/* Finance Group - Treasurer Only */}
+        {isTreasurer && (
+          <DropdownGroup
+            name="finance"
+            label="Finance"
+            paths={["/dashboard/bills"]}
+          >
+            <SubLink to="/dashboard/bills">View Bills</SubLink>
+            <SubLink to="/dashboard/bills/create">Add Bill</SubLink>
+          </DropdownGroup>
+        )}
+      </>
+    );
+  };
+
+  const renderStudentNav = () => (
+    <>
+      <NavLink to="/dashboard/article">Post Blog</NavLink>
+      <NavLink to="/dashboard/myblog">My BlogPosts</NavLink>
+      <NavLink to="/dashboard/blogs">All Blogs</NavLink>
+      <NavLink to="/dashboard/events">Upcoming Events</NavLink>
+    </>
+  );
+
+  const renderNavigation = () => {
+    switch (role) {
+      case "ADMIN":
+        return renderAdminNav();
+      case "LEAD":
+        return renderLeadNav();
+      case "STUDENT":
+        return renderStudentNav();
+      default:
+        return <p className="no-actions">No actions available</p>;
+    }
+  };
+
+  return (
+    <nav className="sidebar" role="navigation" aria-label="Dashboard navigation">
+      <h3 className="sidebar-title">{getDashboardTitle()}</h3>
+      <div className="sidebar-actions">
+        {renderNavigation()}
+      </div>
+    </nav>
   );
 };
 

@@ -1,8 +1,6 @@
 import React from "react";
 import { Row, Col } from "react-bootstrap";
 import { BsArrowRight } from "react-icons/bs";
-import { Link } from "react-router-dom";
-import useAuthStore from "../../../store/authStore.js";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import "./Blog.css";
@@ -19,16 +17,10 @@ const textVariants = {
 
 const BlogPost = ({ title, description, imageUrl, imageAlt, reverseOrder }) => {
     const navigate = useNavigate();
-   const { token } = useAuthStore();
- 
+
   const handleLearnMoreClick = () => {
-    if (token) {
-      // User is logged in, go to dashboard
-      navigate('/dashboard/blogs');
-    } else {
-      // User is not logged in, go to login
-      navigate('/login');
-    }
+    // Navigate to public blogs page - accessible to everyone
+    navigate('/blogs');
   };
   const imageCol = (
     <Col

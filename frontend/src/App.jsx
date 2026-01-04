@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from "react-router-dom";
 
 import "./styles/layout.css";
 
@@ -44,6 +44,22 @@ import CreateBillPage from "./pages/Bills/CreateBillPage.jsx";
 import BillDetailPage from "./pages/Bills/BillDetailPage.jsx";
 import MemberProfile from "./components/members/MemberProfile.jsx";
 
+// Redirect component for dashboard based on role
+const DashboardRedirect = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const role = localStorage.getItem("role");
+    if (role === "ADMIN" || role === "LEAD") {
+      navigate("/dashboard/members", { replace: true });
+    } else {
+      navigate("/dashboard/blogs", { replace: true });
+    }
+  }, [navigate]);
+
+  return null;
+};
+
 function App() {
   const [role, setRole] = useState(null);
 
@@ -63,13 +79,6 @@ function App() {
     setRole(null);
   };
 
-  const DashboardHome = () => (
-    <div>
-      <h2>Welcome to your Dashboard</h2>
-      <p>Please select an option from the menu on the left.</p>
-    </div>
-  );
-
   return (
     <Router>
   <Routes>
@@ -85,6 +94,7 @@ function App() {
 
     {/* Dashboard */}
     <Route path="/dashboard" element={<DashboardPage />}>
+      <Route index element={<DashboardRedirect />} />
       <Route path="bills" element={<BillsListPage />} />
       <Route path="bills/create" element={<CreateBillPage />} />
       <Route path="bills/:id" element={<BillDetailPage />} />

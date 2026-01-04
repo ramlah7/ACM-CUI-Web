@@ -26,16 +26,32 @@ class StudentSerializer(serializers.ModelSerializer):
         'graphics_and_media',
         'social_media_and_marketing',
         'registration_and_decor',
-        'events_and_logistics'
+        'events_and_logistics',
+        ''  # Allow empty club for executives
     ],
-        allow_blank=False
+        allow_blank=True,
+        required=False
     )
-    title = serializers.CharField(required=False)
+    title = serializers.CharField(required=False, allow_blank=True)
     content = serializers.CharField(required=False)
+
+    # Executive titles that don't require a club (ACM-wide positions)
+    EXECUTIVE_TITLES = ['PRESIDENT', 'VICE PRESIDENT', 'SECRETARY', 'TREASURER']
 
     class Meta:
         model = Student
         fields = '__all__'
+
+    def validate(self, data):
+        """Validate that club is required for non-executive members"""
+        title = data.get('title', '')
+        club = data.get('club', '')
+
+        # If not an executive title and club is empty, raise error
+        if title not in self.EXECUTIVE_TITLES and not club:
+            raise ValidationError({'club': 'Club selection is required for non-executive members.'})
+
+        return data
 
     def create(self, validated_data):
         user_data = validated_data.pop('user')
@@ -304,3 +320,86 @@ class BillSerializer(serializers.ModelSerializer):
         model = Bill
         fields = '__all__'
         read_only_fields = ['id']
+
+
+class ProfileUserSerializer(serializers.ModelSerializer):
+    """Serializer for updating user info in profile updates"""
+    # Override email and username to remove default unique validators
+    # since we handle uniqueness validation manually below
+    email = serializers.EmailField(required=False)
+    username = serializers.CharField(required=False)
+
+    class Meta:
+        model = User
+        fields = ['id', 'first_name', 'last_name', 'email', 'username']
+        read_only_fields = ['id']
+        # Disable default unique validators - we handle them manually
+        extra_kwargs = {
+            'email': {'validators': []},
+            'username': {'validators': []},
+        }
+
+    def validate_email(self, value):
+        """Check email uniqueness excluding current user"""
+        instance = self.instance
+        if instance:
+            # Exclude current user when checking uniqueness
+            if User.objects.filter(email=value).exclude(pk=instance.pk).exists():
+                raise serializers.ValidationError("user with this email already exists.")
+        return value
+
+    def validate_username(self, value):
+        """Check username uniqueness excluding current user"""
+        instance = self.instance
+        if instance:
+            # Exclude current user when checking uniqueness
+            if User.objects.filter(username=value).exclude(pk=instance.pk).exists():
+                raise serializers.ValidationError("user with this username already exists.")
+        return value
+
+
+class ProfileUpdateSerializer(serializers.ModelSerializer):
+    """Serializer specifically for profile updates - doesn't require roll_no validation"""
+    user = ProfileUserSerializer(required=False)
+    profile_pic = serializers.ImageField(required=False, allow_null=True)
+    profile_desc = serializers.CharField(required=False, allow_blank=True, max_length=200)
+
+    class Meta:
+        model = Student
+        fields = ['id', 'user', 'profile_pic', 'profile_desc']
+        read_only_fields = ['id']
+
+    def validate_user(self, value):
+        """Validate user data with the actual user instance for uniqueness checks"""
+        if self.instance and value:
+            user_instance = self.instance.user
+            # Create a serializer with the user instance to properly validate uniqueness
+            user_serializer = ProfileUserSerializer(
+                instance=user_instance,
+                data=value,
+                partial=True
+            )
+            if not user_serializer.is_valid():
+                raise serializers.ValidationError(user_serializer.errors)
+            return user_serializer.validated_data
+        return value
+
+    def update(self, instance, validated_data):
+        user_data = validated_data.pop('user', None)
+
+        # Update student fields
+        if 'profile_pic' in validated_data:
+            instance.profile_pic = validated_data['profile_pic']
+        if 'profile_desc' in validated_data:
+            instance.profile_desc = validated_data['profile_desc']
+
+        # Update user fields if provided
+        if user_data:
+            user = instance.user
+            for attr, value in user_data.items():
+                if attr != 'id':  # Don't update ID
+                    setattr(user, attr, value)
+            user.save()
+
+        instance.save()
+        return instance

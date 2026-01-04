@@ -8,7 +8,7 @@ const LeftCol = () => {
   const [visibleText, setVisibleText] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const [courses, setCourses] = useState(0);
+  const [competitions, setCompetitions] = useState(0);
   const [members, setMembers] = useState(0);
   const [events, setEvents] = useState(0);
 
@@ -32,8 +32,8 @@ const LeftCol = () => {
       }, 1000 / frameRate);
     };
 
-    animateNumber(100, setCourses);
-    animateNumber(60, setMembers);
+    animateNumber(30, setCompetitions);
+    animateNumber(100, setMembers);
     animateNumber(60, setEvents);
   }, [isInView]);
 
@@ -69,8 +69,8 @@ const LeftCol = () => {
 
       <div className="text-center hero-stats">
         <div>
-          <h3 className="mb-0 fw-bold text-white">{courses}+</h3>
-          <p className="mb-0 text-white">Courses</p>
+          <h3 className="mb-0 fw-bold text-white">{competitions}+</h3>
+          <p className="mb-0 text-white">Competitions</p>
         </div>
         <div>
           <h3 className="mb-0 fw-bold text-white">{members}+</h3>
