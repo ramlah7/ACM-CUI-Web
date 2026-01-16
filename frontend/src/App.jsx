@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from "react-router-dom";
 
-import "./styles/layout.css";
+import "./styles/Layout.css";
 
 import LandingPage from "./pages/Landing/LandingPage.jsx";
 import DashboardPage from "./pages/DashboardPage/DashboardPage.jsx";
@@ -43,6 +43,8 @@ import BillsListPage from "./pages/Bills/BillsListPage.jsx";
 import CreateBillPage from "./pages/Bills/CreateBillPage.jsx";
 import BillDetailPage from "./pages/Bills/BillDetailPage.jsx";
 import MemberProfile from "./components/members/MemberProfile.jsx";
+import ApplicationSubmitted from "./pages/Recruitment/ApplicationSubmitted.jsx";
+import RecruitmentManagement from "./pages/Recruitment/RecruitmentManagement.jsx";
 
 // Redirect component for dashboard based on role
 const DashboardRedirect = () => {
@@ -81,59 +83,61 @@ function App() {
 
   return (
     <Router>
-  <Routes>
+      <Routes>
 
-    <Route path="/" element={<LandingPage />} />
+        <Route path="/" element={<LandingPage />} />
 
-    <Route path="/login" element={<><LoginPage /><Footer /></>} />
+        <Route path="/login" element={<><LoginPage /><Footer /></>} />
 
-    <Route path="/contact" element={<><ContactPage /><Footer /></>} />
-    <Route path="/mission" element={<><MissionPage /><Footer /></>} />
-    <Route path="/member/:id" element={<MemberProfile />} />
-    <Route path="/blogs" element={<BlogListingPage />} />
+        <Route path="/contact" element={<><ContactPage /><Footer /></>} />
+        <Route path="/mission" element={<><MissionPage /><Footer /></>} />
+        <Route path="/recruitment/submitted" element={<ApplicationSubmitted />} />
+        <Route path="/member/:id" element={<MemberProfile />} />
+        <Route path="/blogs" element={<BlogListingPage />} />
 
-    {/* Dashboard */}
-    <Route path="/dashboard" element={<DashboardPage />}>
-      <Route index element={<DashboardRedirect />} />
-      <Route path="bills" element={<BillsListPage />} />
-      <Route path="bills/create" element={<CreateBillPage />} />
-      <Route path="bills/:id" element={<BillDetailPage />} />
-      <Route path="mark-attendance" element={<MarkAttendance />} />
-      <Route path="meeting-history" element={<MeetingList />} />
-      <Route path="meetings/:id" element={<ViewAttendancePage />} />
-      <Route path="meetings/:id/edit" element={<EditAttendancePage />} />
+        {/* Dashboard */}
+        <Route path="/dashboard" element={<DashboardPage />}>
+          <Route index element={<DashboardRedirect />} />
+          <Route path="bills" element={<BillsListPage />} />
+          <Route path="bills/create" element={<CreateBillPage />} />
+          <Route path="bills/:id" element={<BillDetailPage />} />
+          <Route path="mark-attendance" element={<MarkAttendance />} />
+          <Route path="meeting-history" element={<MeetingList />} />
+          <Route path="meetings/:id" element={<ViewAttendancePage />} />
+          <Route path="meetings/:id/edit" element={<EditAttendancePage />} />
 
-      <Route path="otp" element={<ReqOTP />} />
-      <Route path="reset-password" element={<ResetPassword />} />
+          <Route path="otp" element={<ReqOTP />} />
+          <Route path="reset-password" element={<ResetPassword />} />
 
-      <Route path="members" element={<TrackMembersPage />} />
-      <Route path="signup" element={<RegPage />} />
+          <Route path="members" element={<TrackMembersPage />} />
+          <Route path="signup" element={<RegPage />} />
+          <Route path="recruitment" element={<RecruitmentManagement />} />
 
-      {/* Blogs */}
-      <Route path="blogs" element={<BlogListingPage />} />
-      <Route path="admin-blogs" element={<AdminBlogPage />} />
-      <Route path="myblog" element={<MyBlogPage />} />
-      <Route path="article" element={<ArticlePage />} />
+          {/* Blogs */}
+          <Route path="blogs" element={<BlogListingPage />} />
+          <Route path="admin-blogs" element={<AdminBlogPage />} />
+          <Route path="myblog" element={<MyBlogPage />} />
+          <Route path="article" element={<ArticlePage />} />
 
-      {/* Profile */}
-      <Route path="edit-profile" element={<ProfilePage />} />
-      <Route path="view-profile" element={<ViewProfilePage />} />
+          {/* Profile */}
+          <Route path="edit-profile" element={<ProfilePage />} />
+          <Route path="view-profile" element={<ViewProfilePage />} />
 
-      {/* Events */}
-      <Route path="events" element={<EventsListPage />} />
-      <Route path="events/create" element={<EventCreatePage />} />
-    </Route>
+          {/* Events */}
+          <Route path="events" element={<EventsListPage />} />
+          <Route path="events/create" element={<EventCreatePage />} />
+        </Route>
 
-    {/* Public Routes */}
-    <Route path="/teams" element={<><TeamSection /><Footer /></>} />
-    <Route path="/blog/:id" element={<><SinglePostPage /><Footer /></>} />
-    <Route path="/blogs/:id/edit" element={<><EditBlogWrapper /><Footer /></>} />
-    <Route path="/events/:id" element={<><EventDetailPage /><Footer /></>} />
-    <Route path="/team/:title" element={<><TeamPage /><Footer /></>} />
-    <Route path="/achievement" element={<><AchievementPage /><Footer /></>} />
+        {/* Public Routes */}
+        <Route path="/teams" element={<><TeamSection /><Footer /></>} />
+        <Route path="/blog/:id" element={<><SinglePostPage /><Footer /></>} />
+        <Route path="/blogs/:id/edit" element={<><EditBlogWrapper /><Footer /></>} />
+        <Route path="/events/:id" element={<><EventDetailPage /><Footer /></>} />
+        <Route path="/team/:title" element={<><TeamPage /><Footer /></>} />
+        <Route path="/achievement" element={<><AchievementPage /><Footer /></>} />
 
-  </Routes>
-</Router>
+      </Routes>
+    </Router>
 
   );
 

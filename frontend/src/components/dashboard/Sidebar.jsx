@@ -105,6 +105,7 @@ const Sidebar = ({ onNavigate }) => {
 
   const renderAdminNav = () => (
     <>
+      <NavLink to="/dashboard/recruitment">Recruitment</NavLink>
       <NavLink to="/dashboard/members">Member Management</NavLink>
       <NavLink to="/dashboard/blogs">Handle Blogs</NavLink>
       <NavLink to="/dashboard/events">Events</NavLink>
