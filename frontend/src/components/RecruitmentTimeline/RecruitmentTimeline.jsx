@@ -1,10 +1,10 @@
 import React from 'react';
 import './RecruitmentTimeline.css';
 
-import timelineIcon1 from '../../assets/timeline1.png'; 
-import timelineIcon2 from '../../assets/timeline2.png';
-import timelineIcon3 from '../../assets/timeline3.png';
-import timelineIcon4 from '../../assets/timeline4.png';
+import timelineIcon1 from '../../assets/Timeline1.png'; 
+import timelineIcon2 from '../../assets/Timeline2.png';
+import timelineIcon3 from '../../assets/Timeline3.png';
+import timelineIcon4 from '../../assets/Timeline4.png';
 
 const RecruitmentTimeline = () => {
   const timelineData = [
