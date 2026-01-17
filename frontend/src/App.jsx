@@ -43,6 +43,8 @@ import BillsListPage from "./pages/Bills/BillsListPage.jsx";
 import CreateBillPage from "./pages/Bills/CreateBillPage.jsx";
 import BillDetailPage from "./pages/Bills/BillDetailPage.jsx";
 import MemberProfile from "./components/members/MemberProfile.jsx";
+import RecruitmentPage from "./pages/Recruitment/RecruitmentPage.jsx";
+
 
 // Redirect component for dashboard based on role
 const DashboardRedirect = () => {
@@ -123,6 +125,11 @@ function App() {
       <Route path="events" element={<EventsListPage />} />
       <Route path="events/create" element={<EventCreatePage />} />
     </Route>
+
+
+    {/* Recruitment */}
+    <Route path="/Recruitment" element={<RecruitmentPage />} />
+
 
     {/* Public Routes */}
     <Route path="/teams" element={<><TeamSection /><Footer /></>} />
