@@ -276,7 +276,7 @@
 }
 
 /* Submit Button */
-.submit-btn {
+.submitApp-btn {
   width: 300px;
   height: 50px;
   background-color: var(--button-bg);
@@ -288,15 +288,16 @@
   cursor: pointer;
   transition: all 0.2s ease;
   margin-top: 8px;
+  background-color: #0C4182;
 }
 
-.submit-btn:hover {
+.submitApp-btn:hover {
   background-color: var(--button-hover);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 }
 
-.submit-btn:active {
+.submitApp-btn:active {
   transform: translateY(0);
 }
 
@@ -407,7 +408,7 @@
     margin-bottom: 6px;
   }
 
-  .submit-btn {
+  .submitApp-btn {
     height: 46px;
     font-size: 15px;
   }
