@@ -204,3 +204,63 @@
   text-align: center;
   padding: 0;
 }
+
+/* Large Modal for Edit Event */
+.modal-content-large {
+  background: white;
+  border-radius: 12px;
+  padding: 40px;
+  width: 900px;
+  max-width: 95%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.modal-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 28px;
+  color: #666;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.modal-close-btn:hover {
+  color: #333;
+}
+
+/* Cancel Button */
+.cancel-event-btn {
+  background-color: #f3f4f6;
+  color: #374151;
+  padding: 14px 40px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.cancel-event-btn:hover {
+  background-color: #e5e7eb;
+  transform: translateY(-1px);
+}
+
+.cancel-event-btn:active {
+  transform: translateY(0);
+}

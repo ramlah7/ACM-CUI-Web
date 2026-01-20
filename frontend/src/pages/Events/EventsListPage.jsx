@@ -10,9 +10,15 @@ const EventListPage = () => {
   const [editingEvent, setEditingEvent] = useState(null);
   const [editTitle, setEditTitle] = useState("");
   const [editContent, setEditContent] = useState("");
+  const [editDate, setEditDate] = useState("");
+  const [editTime, setEditTime] = useState("");
+  const [editVenue, setEditVenue] = useState("");
+  const [editCapacity, setEditCapacity] = useState("");
+  const [editCategory, setEditCategory] = useState("");
+  const [editTags, setEditTags] = useState("");
   const [editImages, setEditImages] = useState([]);
   const [showEditModal, setShowEditModal] = useState(false);
-  const userRole = localStorage.getItem("role"); 
+  const userRole = localStorage.getItem("role");
   const isAdminOrLead = userRole === "ADMIN" || userRole === "LEAD";
 
   useEffect(() => {
@@ -65,6 +71,12 @@ const removeNewImage = (index) => {
     setEditingEvent(event.id);
     setEditTitle(event.title);
     setEditContent(event.content);
+    setEditDate(event.date || "");
+    setEditTime(event.time || "");
+    setEditVenue(event.venue || "");
+    setEditCapacity(event.capacity || "");
+    setEditCategory(event.category || "");
+    setEditTags(event.tags || "");
     setEditImages([]);
     setShowEditModal(true);
   };
@@ -150,67 +162,194 @@ const handleEditImageChange = (e) => {
       {/* Edit Modal */}
 {showEditModal && (
   <div className="modal-overlay">
-    <div className="modal-content">
-      <h3>Edit Event</h3>
-      <input
-        type="text"
-        value={editTitle}
-        onChange={(e) => setEditTitle(e.target.value)}
-      />
-      <textarea
-        value={editContent}
-        onChange={(e) => setEditContent(e.target.value)}
-      />
-
-      {/* Existing images */}
-      <div className="modal-image-preview">
-        {events.find((e) => e.id === editingEvent)?.images.map((img) => (
-          <div key={img.id} className="preview-box">
-            <img src={img.image} alt="existing" />
-            <button
-              type="button"
-              className="btn-remove-img"
-              onClick={() => deleteImage(editingEvent, img.id)} // backend delete
-            >
-              ✕
-            </button>
-          </div>
-        ))}
-
-        {/* New selected images */}
-        {Array.from(editImages).map((file, idx) => (
-          <div key={idx} className="preview-box">
-            <img src={URL.createObjectURL(file)} alt="new upload" />
-            <button
-              type="button"
-              className="btn-remove-img"
-              onClick={() =>
-                setEditImages((prev) => prev.filter((_, i) => i !== idx))
-              }
-            >
-              ✕
-            </button>
-          </div>
-        ))}
-      </div>
-
-      {/* File input for uploading new images */}
-      <input type="file" multiple onChange={handleEditImageChange} />
-
-      <div className="form-buttons">
+    <div className="modal-content-large">
+      <div className="modal-header">
+        <h2 className="event-details-heading">Edit Event</h2>
         <button
-          onClick={() => saveEdit(editingEvent)}
-          className="btn-design"
-        >
-          Save
-        </button>
-        <button
+          className="modal-close-btn"
           onClick={() => setShowEditModal(false)}
-          className="btn-design"
         >
-          Cancel
+          ✕
         </button>
       </div>
+
+      <form className="event-form-new">
+        {/* Event Title */}
+        <div className="form-field full-width">
+          <label>Event Title <span className="required">*</span></label>
+          <input
+            type="text"
+            placeholder="e.g., Web Development Workshop"
+            value={editTitle}
+            onChange={(e) => setEditTitle(e.target.value)}
+            required
+          />
+        </div>
+
+        {/* Event Description */}
+        <div className="form-field full-width">
+          <label>Event Description</label>
+          <textarea
+            placeholder="Describe your event, what participants will learn or experience....."
+            value={editContent}
+            onChange={(e) => setEditContent(e.target.value)}
+            required
+            rows="4"
+          />
+        </div>
+
+        {/* Date and Time Row */}
+        <div className="form-row">
+          <div className="form-field">
+            <label>Date<span className="required">*</span></label>
+            <input
+              type="date"
+              placeholder="mm/dd/yyyy"
+              value={editDate}
+              onChange={(e) => setEditDate(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-field">
+            <label>Time <span className="required">*</span></label>
+            <input
+              type="time"
+              placeholder="--:-- ---"
+              value={editTime}
+              onChange={(e) => setEditTime(e.target.value)}
+              required
+            />
+          </div>
+        </div>
+
+        {/* Venue */}
+        <div className="form-field full-width">
+          <label>Venue <span className="required">*</span></label>
+          <input
+            type="text"
+            placeholder="e.g., Computer Science  Block Lecture Room F-09"
+            value={editVenue}
+            onChange={(e) => setEditVenue(e.target.value)}
+            required
+          />
+        </div>
+
+        {/* Capacity and Category Row */}
+        <div className="form-row">
+          <div className="form-field">
+            <label>Capacity<span className="required">*</span></label>
+            <input
+              type="number"
+              placeholder="e.g., 50"
+              value={editCapacity}
+              onChange={(e) => setEditCapacity(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-field">
+            <label>Category <span className="required">*</span></label>
+            <select
+              value={editCategory}
+              onChange={(e) => setEditCategory(e.target.value)}
+              required
+            >
+              <option value="">Select a category</option>
+              <option value="Workshop">Workshop</option>
+              <option value="Seminar">Seminar</option>
+              <option value="Competition">Competition</option>
+              <option value="Networking">Networking</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Event Images */}
+        <div className="form-field full-width">
+          <label>Event Images</label>
+
+          {/* Existing and New Images */}
+          <div className="image-preview-container-new">
+            {/* Existing images from server */}
+            {events.find((e) => e.id === editingEvent)?.images.map((img) => (
+              <div key={img.id} className="image-preview-box-new">
+                <img src={img.image} alt="existing" className="image-preview-new" />
+                <button
+                  type="button"
+                  className="remove-image-btn-new"
+                  onClick={() => deleteImage(editingEvent, img.id)}
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+
+            {/* New selected images */}
+            {Array.from(editImages).map((file, idx) => (
+              <div key={`new-${idx}`} className="image-preview-box-new">
+                <img
+                  src={URL.createObjectURL(file)}
+                  alt="new upload"
+                  className="image-preview-new"
+                />
+                <button
+                  type="button"
+                  className="remove-image-btn-new"
+                  onClick={() => setEditImages((prev) => prev.filter((_, i) => i !== idx))}
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
+
+          {/* File upload button */}
+          <div className="file-upload-wrapper" style={{marginTop: '16px'}}>
+            <input
+              type="file"
+              id="edit-event-image"
+              accept="image/*"
+              multiple
+              onChange={handleEditImageChange}
+              className="file-input-hidden"
+            />
+            <label htmlFor="edit-event-image" className="file-upload-label">
+              <span className="file-upload-btn">Add Images</span>
+              <span className="file-upload-text">
+                {editImages.length > 0 ? `${editImages.length} new file(s) selected` : 'Add more images'}
+              </span>
+            </label>
+          </div>
+        </div>
+
+        {/* Tag */}
+        <div className="form-field full-width">
+          <label>Tag</label>
+          <input
+            type="text"
+            placeholder="e.g., Beginner, Web Development, Hand-on (comma-separate)"
+            value={editTags}
+            onChange={(e) => setEditTags(e.target.value)}
+          />
+        </div>
+
+        {/* Action Buttons */}
+        <div className="form-submit-wrapper" style={{gap: '12px', justifyContent: 'flex-end'}}>
+          <button
+            type="button"
+            onClick={() => setShowEditModal(false)}
+            className="cancel-event-btn"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={() => saveEdit(editingEvent)}
+            className="create-event-btn"
+          >
+            Save Changes
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 )}
