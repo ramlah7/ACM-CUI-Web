@@ -57,7 +57,6 @@ import RecruitmentManagement from "./pages/Recruitment/RecruitmentManagement.jsx
 
 // Management
 import HackathonManagement from "./pages/Hackathon/HackathonManagement.jsx";
-import StudentWeekManagement from "./pages/StudentWeek/StudentWeekManagement.jsx";
 
 // Bills
 import BillsListPage from "./pages/Bills/BillsListPage.jsx";
@@ -161,12 +160,11 @@ function App() {
           {/* Management */}
           <Route path="recruitment" element={<RecruitmentManagement />} />
           <Route path="hackathon" element={<HackathonManagement />} />
-          <Route path="student-week" element={<StudentWeekManagement />} />
 
           {/* Events inside dashboard */}
           <Route path="events" element={<EventsListPage />} />
           <Route path="events/create" element={<EventCreatePage />} />
-          <Route path="events/dashboard" element={<EventDashboard/>} />
+          <Route path="events/management" element={<EventDashboard/>} />
         </Route>
 
       </Routes>
