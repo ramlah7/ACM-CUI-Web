@@ -48,11 +48,14 @@ import ViewProfilePage from "./pages/Profile/ViewProfilePage.jsx";
 import EventsListPage from "./pages/Events/EventsListPage.jsx";
 import EventCreatePage from "./pages/Events/EventsCreatePage.jsx";
 import EventDetailPage from "./pages/Events/EventDetailPage.jsx";
+import EventIndividualForm from "./pages/Events/EventIndividualForm.jsx";
+import EventTeamForm from "./pages/Events/EventTeamForm.jsx";
 
 // Recruitment
 import RecruitmentPage from "./pages/Recruitment/RecruitmentPage.jsx";
 import RecruitmentForm from "./pages/Recruitment/RecruitmentForm.jsx";
 import ApplicationSubmitted from "./pages/Recruitment/ApplicationSubmitted.jsx";
+import RecruitmentForm from "./pages/Recruitment/RecruitmentForm.jsx";
 import RecruitmentManagement from "./pages/Recruitment/RecruitmentManagement.jsx";
 
 // Management
@@ -110,6 +113,8 @@ function App() {
         <Route path="/recruitment" element={<RecruitmentPage />} />
         <Route path="/recruitmentForm" element={<RecruitmentForm />} />
         <Route path="/recruitment/submitted" element={<ApplicationSubmitted />} />
+        <Route path="/recruitmentForm" element={<><RecruitmentForm /><Footer /></>} />
+        <Route path="/member/:id" element={<MemberProfile />} />
 
         {/* Blogs */}
         <Route path="/blogs" element={<BlogListingPage />} />
@@ -166,6 +171,16 @@ function App() {
           <Route path="events/create" element={<EventCreatePage />} />
           <Route path="events/management" element={<EventDashboard/>} />
         </Route>
+
+        {/* Public Routes */}
+        <Route path="/teams" element={<><TeamSection /><Footer /></>} />
+        <Route path="/blog/:id" element={<><SinglePostPage /><Footer /></>} />
+        <Route path="/blogs/:id/edit" element={<><EditBlogWrapper /><Footer /></>} />
+        <Route path="/events/:id" element={<><EventDetailPage /><Footer /></>} />
+        <Route path="events/individualform" element={<EventIndividualForm />} />
+          <Route path="events/teamform" element={<EventTeamForm />} />
+        <Route path="/team/:title" element={<><TeamPage /><Footer /></>} />
+        <Route path="/achievement" element={<><AchievementPage /><Footer /></>} />
 
       </Routes>
     </Router>
