@@ -67,6 +67,7 @@ import BillDetailPage from "./pages/Bills/BillDetailPage.jsx";
 // Components
 import Footer from "./components/Footer/Footer.jsx";
 import TeamSection from "./components/teams/TeamSection.jsx";
+import EventDashboard from "./pages/Events/EventDashboard.jsx";
 
 // 🔁 Dashboard redirect based on role
 const DashboardRedirect = () => {
@@ -165,6 +166,7 @@ function App() {
           {/* Events inside dashboard */}
           <Route path="events" element={<EventsListPage />} />
           <Route path="events/create" element={<EventCreatePage />} />
+          <Route path="events/dashboard" element={<EventDashboard/>} />
         </Route>
 
       </Routes>
