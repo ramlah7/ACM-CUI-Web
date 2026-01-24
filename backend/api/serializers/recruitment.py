@@ -147,8 +147,7 @@ class RecruitmentApplicationSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = RecruitmentApplication
-        fields = ['id', 'recruitment_session', 'status', 'created_at']
-        read_only_fields = ['created_at']
+        fields = ['id', 'recruitment_session', 'status']
 
 
 class RecruitmentApplicationDetailSerializer(serializers.ModelSerializer):
@@ -164,7 +163,7 @@ class RecruitmentApplicationDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = RecruitmentApplication
         fields = [
-            'id', 'recruitment_session', 'status', 'created_at',
+            'id', 'recruitment_session', 'status',
             'personal_info', 'academic_info', 'role_preferences'
         ]
 
@@ -190,10 +189,10 @@ class RecruitmentApplicationSubmissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = RecruitmentApplication
         fields = [
-            'id', 'recruitment_session', 'status', 'created_at',
+            'id', 'recruitment_session', 'status',
             'personal_info', 'academic_info', 'role_preferences'
         ]
-        read_only_fields = ['id', 'status', 'created_at']
+        read_only_fields = ['id', 'status']
     
     def create(self, validated_data):
         """
@@ -230,7 +229,6 @@ class RecruitmentApplicationSubmissionSerializer(serializers.ModelSerializer):
             'id': instance.id,
             'recruitment_session': instance.recruitment_session.id,
             'status': instance.status,
-            'created_at': instance.created_at,
             'personal_info': PersonalInfoSerializer(instance.personal_info).data,
             'academic_info': AcademicInfoSerializer(instance.academic_info).data,
             'role_preferences': RolePreferencesSerializer(instance.role_preferences).data,
