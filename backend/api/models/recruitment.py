@@ -9,16 +9,21 @@ class ApplicationStatus(models.TextChoices):
     ACCEPTED = "ACCEPTED", "Accepted"
     REJECTED = "REJECTED", "Rejected"
     INTERVIEWS = "INTERVIEWS", "Interviews"
+
+
 class Program(models.TextChoices):
-    BSCS = "BSCS", "BSCS"
-    BSSE = "BSSE", "BSSE"
-    BSAI = "BSAI", "BSAI"
+    BSCS = "BSCS", "bscs"
+    BSSE = "BSSE", "bsse"
+    BSAI = "BSAI", "bsai"
+
+
 class Role(models.TextChoices):
     CODEHUB = "CODEHUB", "CodeHub"
     GRAPHICS_MEDIA = "GRAPHICS_MEDIA", "Graphics & Media"
     SOCIAL_MEDIA_MARKETING = "SOCIAL_MEDIA_MARKETING", "Social Media and Marketing"
     REGISTRATION_DECOR = "REGISTRATION_DECOR", "Registration & Decor"
     EVENTS_LOGISTICS = "EVENTS_LOGISTICS", "Events & Logistics"
+
 
 #  RECRUITMENT SESSION MODEL 
 class RecruitmentSession(models.Model):
@@ -65,9 +70,10 @@ class RecruitmentSession(models.Model):
         self.full_clean()
         super().save(*args, **kwargs)
 
+
 # RECRUITMENT APPLICATIONS MODEL
 
-class RecruitmentApplications(models.Model):
+class RecruitmentApplication(models.Model):
     recruitment_session = models.ForeignKey(
         RecruitmentSession,
         on_delete=models.CASCADE,
@@ -88,11 +94,12 @@ class RecruitmentApplications(models.Model):
     def __str__(self):
         return f"Application #{self.id} - {self.recruitment_session.uni_session} - {self.status}"
 
+
 #PERSONAL INFO MODEL 
 
 class PersonalInfo(models.Model):
     application = models.OneToOneField(
-        RecruitmentApplications,
+        RecruitmentApplication,
         on_delete=models.CASCADE,
         primary_key=True,
         related_name='personal_info'
@@ -123,7 +130,7 @@ class PersonalInfo(models.Model):
 
 class AcademicInfo(models.Model):
     application = models.OneToOneField(
-        RecruitmentApplications,
+        RecruitmentApplication,
         on_delete=models.CASCADE,
         primary_key=True,
         related_name='academic_info'
@@ -156,7 +163,7 @@ class AcademicInfo(models.Model):
 
 class RolePreferences(models.Model):
     application = models.OneToOneField(
-        RecruitmentApplications,
+        RecruitmentApplication,
         on_delete=models.CASCADE,
         primary_key=True,
         related_name='role_preferences'
