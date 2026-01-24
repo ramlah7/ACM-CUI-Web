@@ -1,50 +1,77 @@
 import { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useNavigate,
+} from "react-router-dom";
 
-import "./styles/layout.css";
+import "./styles/Layout.css";
 
+// Pages
 import LandingPage from "./pages/Landing/LandingPage.jsx";
 import DashboardPage from "./pages/DashboardPage/DashboardPage.jsx";
+import ContactPage from "./pages/Contact/ContactPage.jsx";
+import MissionPage from "./pages/MissionPage.jsx";
+import TeamPage from "./pages/TeamPage.jsx";
+import AchievementPage from "./pages/AchievementPage.jsx";
 
+// Blog Pages
 import AdminBlogPage from "./pages/BlogPages/AdminBlogPage.jsx";
 import BlogListingPage from "./pages/BlogPages/BlogListingPage.jsx";
 import SinglePostPage from "./pages/BlogPages/SinglePostPage.jsx";
 import ArticlePage from "./pages/BlogPages/ArticlePage.jsx";
 import MyBlogPage from "./pages/BlogPages/MyBlogPage.jsx";
+import EditBlogWrapper from "./components/Blogs/EditBlogWrapper.jsx";
 
-import RegPage from "./pages/Auth/RegPage.jsx";
+// Auth
 import LoginPage from "./pages/Auth/LoginPage.jsx";
+import RegPage from "./pages/Auth/RegPage.jsx";
 import ReqOTP from "./components/Auth/ReqOTP.jsx";
 import ResetPassword from "./components/Auth/ResetPassword.jsx";
 
-import EditBlogWrapper from "./components/Blogs/EditBlogWrapper.jsx";
-
+// Attendance
 import MeetingList from "./pages/Attendance/MeetingList.jsx";
 import MarkAttendance from "./pages/Attendance/MarkAttendance.jsx";
 import ViewAttendancePage from "./pages/Attendance/ViewAttendancePage.jsx";
 import EditAttendancePage from "./pages/Attendance/EditAttendancePage.jsx";
 
+// Members
 import TrackMembersPage from "./pages/Members/TrackMembersPage.jsx";
-import TeamPage from "./pages/TeamPage.jsx";
-import MissionPage from "./pages/MissionPage.jsx";
-import TeamSection from "./components/teams/TeamSection.jsx";
-import ContactPage from "./pages/Contact/ContactPage.jsx";
+import MemberProfile from "./components/members/MemberProfile.jsx";
 
-import ViewProfilePage from "./pages/Profile/ViewProfilePage.jsx";
+// Profile
 import ProfilePage from "./pages/Profile/ProfilePage.jsx";
+import ViewProfilePage from "./pages/Profile/ViewProfilePage.jsx";
 
+// Events
 import EventsListPage from "./pages/Events/EventsListPage.jsx";
 import EventCreatePage from "./pages/Events/EventsCreatePage.jsx";
 import EventDetailPage from "./pages/Events/EventDetailPage.jsx";
+import EventIndividualForm from "./pages/Events/EventIndividualForm.jsx";
+import EventTeamForm from "./pages/Events/EventTeamForm.jsx";
 
-import Footer from "./components/Footer/Footer.jsx";
-import AchievementPage from "./pages/AchievementPage.jsx";
+// Recruitment
+import RecruitmentPage from "./pages/Recruitment/RecruitmentPage.jsx";
+import RecruitmentForm from "./pages/Recruitment/RecruitmentForm.jsx";
+import ApplicationSubmitted from "./pages/Recruitment/ApplicationSubmitted.jsx";
+import RecruitmentForm from "./pages/Recruitment/RecruitmentForm.jsx";
+import RecruitmentManagement from "./pages/Recruitment/RecruitmentManagement.jsx";
+
+// Management
+import HackathonManagement from "./pages/Hackathon/HackathonManagement.jsx";
+
+// Bills
 import BillsListPage from "./pages/Bills/BillsListPage.jsx";
 import CreateBillPage from "./pages/Bills/CreateBillPage.jsx";
 import BillDetailPage from "./pages/Bills/BillDetailPage.jsx";
-import MemberProfile from "./components/members/MemberProfile.jsx";
 
-// Redirect component for dashboard based on role
+// Components
+import Footer from "./components/Footer/Footer.jsx";
+import TeamSection from "./components/teams/TeamSection.jsx";
+import EventDashboard from "./pages/Events/EventDashboard.jsx";
+
+// 🔁 Dashboard redirect based on role
 const DashboardRedirect = () => {
   const navigate = useNavigate();
 
@@ -65,78 +92,99 @@ function App() {
 
   useEffect(() => {
     const storedRole = localStorage.getItem("role");
-    if (storedRole) {
-      setRole(storedRole);
-    }
+    if (storedRole) setRole(storedRole);
   }, []);
-
-  const handleLogin = (role) => {
-    setRole(role);
-  };
-
-  const handleLogout = () => {
-    localStorage.clear();
-    setRole(null);
-  };
 
   return (
     <Router>
-  <Routes>
+      <Routes>
 
-    <Route path="/" element={<LandingPage />} />
+        {/* ================= PUBLIC ROUTES ================= */}
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<><LoginPage /><Footer /></>} />
+        <Route path="/contact" element={<><ContactPage /><Footer /></>} />
+        <Route path="/mission" element={<><MissionPage /><Footer /></>} />
 
-    <Route path="/login" element={<><LoginPage /><Footer /></>} />
+        {/* ✅ FIXED EVENTS ROUTES */}
+        <Route path="/events" element={<EventsListPage />} />
+        <Route path="/events/:id" element={<><EventDetailPage /></>} />
 
-    <Route path="/contact" element={<><ContactPage /><Footer /></>} />
-    <Route path="/mission" element={<><MissionPage /><Footer /></>} />
-    <Route path="/member/:id" element={<MemberProfile />} />
-    <Route path="/blogs" element={<BlogListingPage />} />
+        {/* Recruitment */}
+        <Route path="/recruitment" element={<RecruitmentPage />} />
+        <Route path="/recruitmentForm" element={<RecruitmentForm />} />
+        <Route path="/recruitment/submitted" element={<ApplicationSubmitted />} />
+        <Route path="/recruitmentForm" element={<><RecruitmentForm /><Footer /></>} />
+        <Route path="/member/:id" element={<MemberProfile />} />
 
-    {/* Dashboard */}
-    <Route path="/dashboard" element={<DashboardPage />}>
-      <Route index element={<DashboardRedirect />} />
-      <Route path="bills" element={<BillsListPage />} />
-      <Route path="bills/create" element={<CreateBillPage />} />
-      <Route path="bills/:id" element={<BillDetailPage />} />
-      <Route path="mark-attendance" element={<MarkAttendance />} />
-      <Route path="meeting-history" element={<MeetingList />} />
-      <Route path="meetings/:id" element={<ViewAttendancePage />} />
-      <Route path="meetings/:id/edit" element={<EditAttendancePage />} />
+        {/* Blogs */}
+        <Route path="/blogs" element={<BlogListingPage />} />
+        <Route path="/blog/:id" element={<><SinglePostPage /><Footer /></>} />
+        <Route path="/blogs/:id/edit" element={<><EditBlogWrapper /><Footer /></>} />
 
-      <Route path="otp" element={<ReqOTP />} />
-      <Route path="reset-password" element={<ResetPassword />} />
+        {/* Teams */}
+        <Route path="/teams" element={<><TeamSection /><Footer /></>} />
+        <Route path="/team/:title" element={<><TeamPage /><Footer /></>} />
 
-      <Route path="members" element={<TrackMembersPage />} />
-      <Route path="signup" element={<RegPage />} />
+        {/* Achievements */}
+        <Route path="/achievement" element={<><AchievementPage /><Footer /></>} />
 
-      {/* Blogs */}
-      <Route path="blogs" element={<BlogListingPage />} />
-      <Route path="admin-blogs" element={<AdminBlogPage />} />
-      <Route path="myblog" element={<MyBlogPage />} />
-      <Route path="article" element={<ArticlePage />} />
+        {/* ================= DASHBOARD ================= */}
+        <Route path="/dashboard" element={<DashboardPage />}>
+          <Route index element={<DashboardRedirect />} />
 
-      {/* Profile */}
-      <Route path="edit-profile" element={<ProfilePage />} />
-      <Route path="view-profile" element={<ViewProfilePage />} />
+          {/* Members */}
+          <Route path="members" element={<TrackMembersPage />} />
+          <Route path="member/:id" element={<MemberProfile />} />
 
-      {/* Events */}
-      <Route path="events" element={<EventsListPage />} />
-      <Route path="events/create" element={<EventCreatePage />} />
-    </Route>
+          {/* Blogs */}
+          <Route path="blogs" element={<BlogListingPage />} />
+          <Route path="admin-blogs" element={<AdminBlogPage />} />
+          <Route path="myblog" element={<MyBlogPage />} />
+          <Route path="article" element={<ArticlePage />} />
 
-    {/* Public Routes */}
-    <Route path="/teams" element={<><TeamSection /><Footer /></>} />
-    <Route path="/blog/:id" element={<><SinglePostPage /><Footer /></>} />
-    <Route path="/blogs/:id/edit" element={<><EditBlogWrapper /><Footer /></>} />
-    <Route path="/events/:id" element={<><EventDetailPage /><Footer /></>} />
-    <Route path="/team/:title" element={<><TeamPage /><Footer /></>} />
-    <Route path="/achievement" element={<><AchievementPage /><Footer /></>} />
+          {/* Profile */}
+          <Route path="edit-profile" element={<ProfilePage />} />
+          <Route path="view-profile" element={<ViewProfilePage />} />
 
-  </Routes>
-</Router>
+          {/* Attendance */}
+          <Route path="mark-attendance" element={<MarkAttendance />} />
+          <Route path="meeting-history" element={<MeetingList />} />
+          <Route path="meetings/:id" element={<ViewAttendancePage />} />
+          <Route path="meetings/:id/edit" element={<EditAttendancePage />} />
 
+          {/* Auth */}
+          <Route path="signup" element={<RegPage />} />
+          <Route path="otp" element={<ReqOTP />} />
+          <Route path="reset-password" element={<ResetPassword />} />
+
+          {/* Bills */}
+          <Route path="bills" element={<BillsListPage />} />
+          <Route path="bills/create" element={<CreateBillPage />} />
+          <Route path="bills/:id" element={<BillDetailPage />} />
+
+          {/* Management */}
+          <Route path="recruitment" element={<RecruitmentManagement />} />
+          <Route path="hackathon" element={<HackathonManagement />} />
+
+          {/* Events inside dashboard */}
+          <Route path="events" element={<EventsListPage />} />
+          <Route path="events/create" element={<EventCreatePage />} />
+          <Route path="events/management" element={<EventDashboard/>} />
+        </Route>
+
+        {/* Public Routes */}
+        <Route path="/teams" element={<><TeamSection /><Footer /></>} />
+        <Route path="/blog/:id" element={<><SinglePostPage /><Footer /></>} />
+        <Route path="/blogs/:id/edit" element={<><EditBlogWrapper /><Footer /></>} />
+        <Route path="/events/:id" element={<><EventDetailPage /><Footer /></>} />
+        <Route path="events/individualform" element={<EventIndividualForm />} />
+          <Route path="events/teamform" element={<EventTeamForm />} />
+        <Route path="/team/:title" element={<><TeamPage /><Footer /></>} />
+        <Route path="/achievement" element={<><AchievementPage /><Footer /></>} />
+
+      </Routes>
+    </Router>
   );
-
 }
 
 export default App;

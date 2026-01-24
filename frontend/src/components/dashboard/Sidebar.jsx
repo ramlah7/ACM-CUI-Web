@@ -105,6 +105,9 @@ const Sidebar = ({ onNavigate }) => {
 
   const renderAdminNav = () => (
     <>
+      <NavLink to="/dashboard/recruitment">Recruitment</NavLink>
+      <NavLink to="/dashboard/hackathon">Hackathon</NavLink>
+      <NavLink to="/dashboard/events/management">Student Week</NavLink>
       <NavLink to="/dashboard/members">Member Management</NavLink>
       <NavLink to="/dashboard/blogs">Handle Blogs</NavLink>
       <NavLink to="/dashboard/events">Events</NavLink>
@@ -192,8 +195,7 @@ const Sidebar = ({ onNavigate }) => {
         return renderLeadNav();
       case "STUDENT":
         return renderStudentNav();
-      default:
-        return <p className="no-actions">No actions available</p>;
+     
     }
   };
 
