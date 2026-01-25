@@ -12,7 +12,7 @@ from rest_framework.filters import SearchFilter
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet, ModelViewSet
-from backend.api.permissions import IsAdmin
+from api.permissions import IsAdmin
 
 
 # -------------
@@ -54,7 +54,7 @@ class ApplicationStatusUpdateViewSet(ModelViewSet):
     serializer_class = RecruitmentApplicationSerializer
     permission_classes = [IsAuthenticated, IsAdmin]
 
-    http_method_names = ['patch', 'get']  
+    http_method_names = ['patch', 'get']
 
     @action(detail=True, methods=["patch"])
     def update_status(self, request, pk=None):
