@@ -7,8 +7,8 @@ import { motion } from "framer-motion";
 
 // ICONS
 import vector1 from "../../../assets/vector 1.png";
-import vector2 from "../../../assets/vector 2.png";
-import vector3 from "../../../assets/vector 3.png";
+import vector2 from "../../../assets/Vector 2.png";
+import vector3 from "../../../assets/Vector 3.png";
 import vector4 from "../../../assets/vector 4.png";
 import vector5 from "../../../assets/vector 5.png";
 
