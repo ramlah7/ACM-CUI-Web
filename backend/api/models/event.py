@@ -1,7 +1,7 @@
 from django.db import models
 from datetime import date
-from django.utils import timezone
 from django.conf import settings
+from django.contrib.postgres.fields import ArrayField
 
 
 def event_image_upload_path(instance, filename):
@@ -16,6 +16,11 @@ class EventType(models.Model):
         verbose_name = 'Event Type'
         verbose_name_plural = 'Event Types'
 
+    def save(self, *args, **kwargs):
+        if self.type:
+            self.type = self.type.upper()
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.type
 
@@ -27,11 +32,20 @@ class Event(models.Model):
     description = models.CharField(max_length=500, default="")
     content = models.TextField()
     date = models.DateField(default=date.today)
-    time_from = models.TimeField(null=True, blank=True)
-    time_to = models.TimeField(null=True, blank=True)
+    time_from = models.TimeField()
+    time_to = models.TimeField()
     location = models.CharField(max_length=200, blank=True)
-    image = models.ImageField(upload_to=event_image_upload_path, default=f'{settings.MEDIA_ROOT}/events/default.png', blank=True, null=True)
+    image = models.ImageField(upload_to='events/', default=f'{settings.MEDIA_ROOT}/events/default.png', blank=True, null=True)
     total_seats = models.PositiveIntegerField(default=0)
+    tags = ArrayField(
+        models.CharField(
+            max_length=25,
+            blank=True,
+            default=list,
+        ),
+        null=True,
+        blank=True,
+    )
 
     class Meta:
         ordering = ['-date']
