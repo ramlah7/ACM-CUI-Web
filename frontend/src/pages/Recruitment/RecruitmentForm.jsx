@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import NavbarComponent from "../../components/LandingPage/Navbar/NavbarComponent";
-import Footer from "../../components/Footer/Footer";
+import Navbar from "../../components/DashboardNavbar/Navbar";
 import "./RecruitmentForm.css";
 import axiosInstance from "../../axios";
 
@@ -452,7 +451,7 @@ const RecruitmentForm = () => {
 
   return (
     <div className="recruitment-page">
-      <NavbarComponent />
+      <Navbar/>
 
       <div className="box-header">
         <div className="form-header">
@@ -800,7 +799,7 @@ const RecruitmentForm = () => {
         </button>
       </form>
 
-      <Footer />
+      
     </div>
   );
 };

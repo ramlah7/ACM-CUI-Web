@@ -148,7 +148,6 @@ const Sidebar = ({ onNavigate }) => {
         >
           <SubLink to="/dashboard/myblog">My BlogPosts</SubLink>
           <SubLink to="/dashboard/article">Post BlogPost</SubLink>
-          <SubLink to="/dashboard/blogs">All BlogPosts</SubLink>
         </DropdownGroup>
 
         {/* Members Group */}

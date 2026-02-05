@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import NavbarComponent from "../../components/LandingPage/Navbar/NavbarComponent";
+import Navbar from "../../components/DashboardNavbar/Navbar";
 import Footer from "../../components/Footer/Footer";
 import "./ApplicationSubmitted.css";
 
@@ -14,7 +14,7 @@ const ApplicationSubmitted = () => {
   return (
     <div className="application-page">
       {/* Navbar */}
-      <NavbarComponent />
+      <Navbar />
 
       {/* Main Content */}
       <main className="application-container">
