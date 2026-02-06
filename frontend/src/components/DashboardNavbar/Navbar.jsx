@@ -28,10 +28,8 @@ const Navbar = ({ onMenuClick, showMenuButton }) => {
   const [showOptions, setShowOptions] = useState(false);
   const [profilePic, setProfilePic] = useState(null);
 
-  // Use student_id from localStorage
   const studentId = localStorage.getItem("student_id");
 
-  // Fetch the logged-in student's profile
   useEffect(() => {
     if (!token || !studentId) return;
 
@@ -39,10 +37,7 @@ const Navbar = ({ onMenuClick, showMenuButton }) => {
       try {
         const res = await axiosInstance.get(`/students/${studentId}`);
         const user = res.data;
-
-        if (user && user.profile_pic) {
-          setProfilePic(user.profile_pic);
-        }
+        if (user && user.profile_pic) setProfilePic(user.profile_pic);
       } catch (err) {
         console.error("Failed to fetch student profile:", err);
       }
@@ -51,7 +46,6 @@ const Navbar = ({ onMenuClick, showMenuButton }) => {
     fetchProfile();
   }, [token, studentId]);
 
-  // Handle search input
   const handleSearchChange = async (e) => {
     const query = e.target.value;
     setSearchQuery(query);
@@ -69,16 +63,8 @@ const Navbar = ({ onMenuClick, showMenuButton }) => {
       ]);
 
       const results = [
-        ...blogsRes.data.map(b => ({
-          id: b.id,
-          title: b.title,
-          type: "blog"
-        })),
-        ...eventsRes.data.map(ev => ({
-          id: ev.id,
-          title: ev.title,
-          type: "event"
-        }))
+        ...blogsRes.data.map((b) => ({ id: b.id, title: b.title, type: "blog" })),
+        ...eventsRes.data.map((ev) => ({ id: ev.id, title: ev.title, type: "event" }))
       ];
 
       setSearchResults(results);
@@ -94,71 +80,76 @@ const Navbar = ({ onMenuClick, showMenuButton }) => {
     navigate(result.type === "blog" ? `/blog/${result.id}` : `/events/${result.id}`);
   };
 
-  const renderAuthButtons = () => {
-    if (!token) {
-      return (
-        <Link
-          to="/login"
-          className="login-link px-4 py-2 ms-lg-3 fw-semibold"
-          style={{ backgroundColor: "#ffffff", cursor: "pointer" }}
-        >
-          Login
-        </Link>
-      );
-    }
-
+ const renderAuthButtons = () => {
+  if (!token) {
     return (
-      <>
-        <Button
-          variant="light"
-          className="login-link px-0 py-0 ms-lg-3"
-          style={{ backgroundColor: "transparent", border: "none" }}
-          onClick={() => setShowOptions(!showOptions)}
-        >
-          {profilePic ? (
-            <img
-              src={profilePic}
-              alt="Profile"
-              className="navbar-profile-pic"
-              style={{
-                width: "36px",
-                height: "36px",
-                borderRadius: "50%",
-                objectFit: "cover"
-              }}
-            />
-          ) : (
-            <div
-              style={{
-                width: "36px",
-                height: "36px",
-                borderRadius: "50%",
-                backgroundColor: "#ccc"
-              }}
-            />
-          )}
-        </Button>
-
-        {showOptions && <ProfileOptions navigate={navigate} />}
-      </>
+      <Link
+        to="/login"
+        className="login-link px-4 py-2 ms-lg-3 fw-semibold"
+        style={{ backgroundColor: "#ffffff", cursor: "pointer", textDecoration: "none" }}
+      >
+        Login
+      </Link>
     );
-  };
+  }
+
+  return (
+    <div className="profile-wrapper position-relative">
+      <Button
+        variant="light"
+        className="login-link px-0 py-0 ms-lg-3"
+        style={{ backgroundColor: "transparent", border: "none" }}
+        onClick={() => setShowOptions((v) => !v)}
+      >
+        {profilePic ? (
+          <img
+            src={profilePic}
+            alt="Profile"
+            className="navbar-profile-pic"
+            style={{
+              width: "36px",
+              height: "36px",
+              borderRadius: "50%",
+              objectFit: "cover"
+            }}
+          />
+        ) : (
+          <div
+            style={{
+              width: "36px",
+              height: "36px",
+              borderRadius: "50%",
+              backgroundColor: "#ccc"
+            }}
+          />
+        )}
+      </Button>
+
+      {showOptions && (
+        <div className="profile-dropdown">
+          <ProfileOptions navigate={navigate} />
+        </div>
+      )}
+    </div>
+  );
+};
+
 
   return (
     <BootstrapNavbar expand="lg" className="custom-navbar1 shadow-sm">
-      <Container fluid className="px-4">
+      <Container fluid className="navbar-container">
         {/* Logo */}
         <BootstrapNavbar.Brand
           as={Link}
           to="/"
-          className="d-none d-lg-flex align-items-center text-white fw-bold"
+          className="d-none d-lg-flex align-items-center text-white fw-bold navbar-brand-custom"
         >
           <img
             src="/acm-comsats-wah-chapter.png"
             alt="ACM Logo"
             className="navbar-logo"
           />
-          <span className="ms-2">ACM CUI WAH CHAPTER</span>
+          <span className="ms-2 navbar-brand-title">ACM CUI WAH CHAPTER</span>
         </BootstrapNavbar.Brand>
 
         {/* Mobile Search - visible ONLY on /dashboard/blogs */}
@@ -211,13 +202,20 @@ const Navbar = ({ onMenuClick, showMenuButton }) => {
 
         <BootstrapNavbar.Collapse id="navbar-nav" className="w-100">
           {/* Navigation Links */}
-          <Nav className="nav-links d-flex flex-lg-row flex-column align-items-lg-center align-items-center mx-auto mt-lg-0 mt-2">
+          <Nav className="nav-links d-flex flex-lg-row flex-column align-items-lg-center align-items-center justify-content-lg-center mx-lg-auto mt-lg-0 mt-2">
             <Nav.Link as={Link} to="/blogs" className="text-white fw-semibold">
               Blog
             </Nav.Link>
+
+            {/* ✅ Added Recruitment */}
+            <Nav.Link as={Link} to="/recruitment" className="text-white fw-semibold">
+              Recruitment
+            </Nav.Link>
+
             <Nav.Link as={Link} to="/achievement" className="text-white fw-semibold">
               Achievement
             </Nav.Link>
+
             <Nav.Link as={Link} to="/events" className="text-white fw-semibold">
               Events
             </Nav.Link>
@@ -225,9 +223,11 @@ const Navbar = ({ onMenuClick, showMenuButton }) => {
             <Nav.Link as={Link} to="/teams" className="text-white fw-semibold">
               Teams
             </Nav.Link>
+
             <Nav.Link as={Link} to="/mission" className="text-white fw-semibold">
               Our Mission
             </Nav.Link>
+
             <Nav.Link as={Link} to="/contact" className="text-white fw-semibold">
               Contact us
             </Nav.Link>
@@ -235,7 +235,7 @@ const Navbar = ({ onMenuClick, showMenuButton }) => {
 
           {/* DESKTOP SEARCH - visible ONLY on /dashboard/blogs */}
           {showSearchBar && (
-            <div className="d-none d-lg-flex align-items-center position-relative">
+            <div className="d-none d-lg-flex align-items-center position-relative navbar-right">
               <Form className="d-flex me-2 position-relative">
                 <Form.Control
                   type="search"
@@ -268,7 +268,7 @@ const Navbar = ({ onMenuClick, showMenuButton }) => {
 
           {/* If NOT /dashboard/blogs, still show Login/Profile */}
           {!showSearchBar && (
-            <div className="d-none d-lg-flex align-items-center">
+            <div className="d-none d-lg-flex align-items-center navbar-right">
               {renderAuthButtons()}
             </div>
           )}

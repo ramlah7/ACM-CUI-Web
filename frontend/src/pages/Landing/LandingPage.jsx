@@ -8,18 +8,24 @@ import Hero from "../../components/LandingPage/Hero/Hero.jsx";
 import ClubsSection from "../../components/LandingPage/Clubs/ClubsSection.jsx";
 import MissionSection from "../../components/LandingPage/Mission/MissionSection.jsx";
 import SplashScreen from "../../components/SplashScreen/SplashScreen.jsx";
+import HackathonManagement from "../Hackathon/HackathonManagement.jsx";
 import "./LandingPage.css";
 
 const LandingPage = () => {
-  const [showSplash, setShowSplash] = useState(true);
-  const [contentReady, setContentReady] = useState(false);
+  // Check if splash was already shown in this session
+  const splashAlreadyShown = sessionStorage.getItem("splashShown") === "true";
+  const [showSplash, setShowSplash] = useState(!splashAlreadyShown);
+  const [contentReady, setContentReady] = useState(splashAlreadyShown);
 
   useEffect(() => {
+    if (!showSplash) return;
+
     const timer = setTimeout(() => {
       setShowSplash(false);
+      sessionStorage.setItem("splashShown", "true");
     }, 5000);
     return () => clearTimeout(timer);
-  }, []);
+  }, [showSplash]);
 
   useEffect(() => {
     if (!showSplash) {
@@ -34,7 +40,10 @@ const LandingPage = () => {
   if (showSplash) {
     return (
       <div style={{ overflow: "hidden", height: "100vh" }}>
-        <SplashScreen onFinish={() => setShowSplash(false)} />
+        <SplashScreen onFinish={() => {
+          setShowSplash(false);
+          sessionStorage.setItem("splashShown", "true");
+        }} />
       </div>
     );
   }
@@ -50,6 +59,7 @@ const LandingPage = () => {
         <div id="clubs"><ClubsSection /></div>
         <div id="blogs"><Blog /></div>
         <div id="events"><EventsSection /></div>
+        <div id="hackathon"><HackathonManagement/></div>
         <div id="mission"><MissionSection /></div>
       </main>
       <Footer/>
